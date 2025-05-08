@@ -74,9 +74,6 @@ def create_database():
             print("Base License is not found ... Trying to genereate one ! ")
             licensemgr.createbasiclicense()
 
-        con.commit()
-        con.close()
-
         pass
         #print("Database already exist")
 
