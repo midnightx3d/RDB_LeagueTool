@@ -76,15 +76,18 @@ def create_database():
 
         con.commit()
         con.close()
+
         pass
         #print("Database already exist")
 
-    else : 
-        print("Database not found , Creating...")
         con = sqlite3.connect("datanetwork.db")
         cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
         con.commit()
-        con.close() # this one is fucking broken and need to be fixed
+        con.close()
+
+    else : 
+        print("Database not found , Creating...")
+        
 
 def menu_ascii():
     while True:
