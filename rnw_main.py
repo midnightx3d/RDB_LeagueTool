@@ -63,9 +63,16 @@ def create_database():
         con = sqlite3.connect("datanetwork.db")
         cur = con.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
+        cur.execute("""CREATE TABLE IF NOT EXISTS USER(userid, regdate, name , nickname, steamid , discordid , nationality , idbrating , 
+        safetyrating , license , track_records , race_amount , wins , podiums , team )""")
 
-        cur.execute("""CREATE TABLE IF NOT EXISTS USER(userid, regdate, name , nickname, discordid , nationality , idbrating , 
-        safetyrating , license , track_records , races , wins , podiums , team )""")
+        baseLcheck = cur.execute("SELECT EXISTS (SELECT 1 FROM LICENSE WHERE licenseid = '000000')").fetchone()[0] # this shit works somehow !
+        #print(baseLcheck)
+        if baseLcheck :
+            pass
+        else :
+            print("Base License is not found ... Trying to genereate one ! ")
+            licensemgr.createbasiclicense()
 
         con.commit()
         con.close()
@@ -77,7 +84,7 @@ def create_database():
         con = sqlite3.connect("datanetwork.db")
         cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
         con.commit()
-        con.close()
+        con.close() # this one is fucking broken and need to be fixed
 
 def menu_ascii():
     while True:

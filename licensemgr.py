@@ -14,6 +14,11 @@ import rnw_main
 
 database_file = Path("datanetwork.db")
 
+# R R R R   E E E E
+# R  -  R   E      
+# R R R R   E E E E
+# R    R    E      
+# R     R   E E E E MINDER To add licenses levels and priority
 def license_menu():
 	while True:
 		print(">===============<")
@@ -117,12 +122,6 @@ def view_license_list():
 	if database_file.exists():
 		con = sqlite3.connect("datanetwork.db")
 		cur = con.cursor()
-		'''
-		lcns_list = cur.execute("SELECT * FROM LICENSE").fetchall()
-		for i in range(len(lcns_list)):
-			print(lcns_list[i],"\n")
-		#print("\n",lcns_list)
-		'''
 		
 		cur.execute(f"SELECT * FROM LICENSE LIMIT 0")
 		columns = [desc[0] for desc in cur.description]
@@ -137,6 +136,27 @@ def view_license_list():
 	else : 
 		print("Error : ERR : Database does not exist")
 		return
+
+def createbasiclicense():
+	database_file #idk why its there lol  I just place it here for fun fuck you 
+	if database_file.exists:
+		con = sqlite3.connect("datanetwork.db")
+		cur = con.cursor()
+		
+		#gen_license_id()
+		cname = "Common"
+		regdate = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+		clid = "000000"
+		ccolor = "Blue"
+		ccountry = "Germany"
+
+		commonlicense = """INSERT INTO LICENSE(licenseid, regdate, name, color, licensing_country) VALUES (?,?,?,?,?);"""
+
+		cur.execute(commonlicense,(clid,regdate,cname,ccolor,ccountry))
+		con.commit()
+		con.close()
+
+		print("Common License was created , Please DO NOT DELETE THIS LICENSE YOU WILL BREAK THE DATABASE!!!")
 
 def delete_license():
 	database_file
