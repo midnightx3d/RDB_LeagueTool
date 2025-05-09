@@ -11,13 +11,12 @@ import os
 import json
 import sqlite3
 import colorama
-
 from pathlib import Path
 
 import usrmgr
 import licensemgr
 
-RNW_VERSION = ("a.0.0.2")
+RNW_VERSION = "a.0.0.2"
 
 def main():
     create_database()
