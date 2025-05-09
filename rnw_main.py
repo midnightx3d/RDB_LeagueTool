@@ -84,6 +84,8 @@ def create_database():
 
     else : 
         print("Database not found , Creating...")
+        con = sqlite3.connect("datanetwork.db")
+        con.close()
         
 
 def menu_ascii():
