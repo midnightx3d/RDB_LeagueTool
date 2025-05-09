@@ -6,6 +6,8 @@ many other functions... ugh they work but I think this code is not optimal and i
 for now this thing doesnt cause performance issues but when there is majority of the functions is done
 
 REMINDERS : Add license sorting by class or prestige 
+
+After project path changes all paths should be fixed? I hope <3
 """
 from itertools import count
 import sys
@@ -21,7 +23,13 @@ from tabulate import tabulate
 
 import rnw_main
 
+#datavase :)
+database_folder = Path("databases")
 database_file = Path("datanetwork.db")
+
+database_path = database_folder / database_file
+
+#print("Database path:", database_path)
 
 def license_menu():
 	while True:
@@ -71,7 +79,7 @@ def add_license(name , country , color):
 	regdate = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
 	# ADD CHECK IF DB EXISTS
-	con = sqlite3.connect("datanetwork.db")
+	con = sqlite3.connect(database_path)
 	cur = con.cursor()
 	cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
 
@@ -86,12 +94,10 @@ def add_license(name , country , color):
 	print("\nSuccesfully added License with id : " , licenseid)
 
 def gen_license_id():
-	database_file
-
-	if database_file.exists():
+	if database_path.exists():
 		global licenseid
 		licenseid = str(uuid.uuid4())[:6]
-		con = sqlite3.connect("datanetwork.db")
+		con = sqlite3.connect(database_path)
 		cur = con.cursor()
 		db_l_id = cur.execute("SELECT licenseid FROM LICENSE").fetchall()
 
@@ -112,8 +118,8 @@ def gen_license_id():
 		return
 
 def view_license_list():
-	if database_file.exists():
-		con = sqlite3.connect("datanetwork.db")
+	if database_path.exists():
+		con = sqlite3.connect(database_path)
 		cur = con.cursor()
 		
 		cur.execute(f"SELECT * FROM LICENSE LIMIT 0")
@@ -131,9 +137,9 @@ def view_license_list():
 		return
 
 def createbasiclicense():
-	database_file #idk why its there lol  I just place it here for fun fuck you 
-	if database_file.exists:
-		con = sqlite3.connect("datanetwork.db")
+	database_path #idk why its there lol  I just place it here for fun fuck you 
+	if database_path.exists:
+		con = sqlite3.connect(database_path)
 		cur = con.cursor()
 		
 		#gen_license_id()
@@ -152,9 +158,9 @@ def createbasiclicense():
 		print("Common License was created , Please DO NOT DELETE THIS LICENSE YOU WILL BREAK THE DATABASE!!!")
 
 def delete_license():
-	database_file
-	if database_file.exists:
-		con = sqlite3.connect("datanetwork.db")
+	database_path
+	if database_path.exists:
+		con = sqlite3.connect(database_path)
 		cur = con.cursor()
 
 
@@ -190,9 +196,8 @@ def delete_license():
 	pass
 
 def edit_license():
-	database_file
-	if database_file.exists():
-		con = sqlite3.connect("datanetwork.db")
+	if database_path.exists():
+		con = sqlite3.connect(database_path)
 		cur = con.cursor()
 
 		print("Succesfully connected to the database! Ready to edit license parameters!")

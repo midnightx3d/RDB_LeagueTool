@@ -2,12 +2,9 @@
 file for checking shit
 """
 
-import usrmgr
+'''import usrmgr
 import sqlite3
 from pathlib import Path
-
-def main():
-    create_countries_db()
 
 def create_countries_db():
     countries_file = Path("countries.db")
@@ -25,10 +22,11 @@ def create_countries_db():
         print("Database not found , Creating...")
         con = sqlite3.connect("countries.db")
         con.close()
+        create_countries_db()
 
 
-
-
+create_countries_db()
+'''
 #def check_country(country: str) -> None:
 #    country = country.strip().lower()
 #    if len(country)<4:

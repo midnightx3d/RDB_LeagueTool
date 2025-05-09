@@ -18,6 +18,11 @@ import licensemgr
 
 RNW_VERSION = "a.0.0.2"
 
+database_folder = Path("databases")
+database_file = Path("datanetwork.db")
+
+database_path = database_folder / database_file
+
 def main():
     create_database()
     #fix_cmd_size()
@@ -38,7 +43,7 @@ def clr_menu():
         os.system('cls')
 
 def launch_ascii():
-    f = open("asciiart.txt","r")
+    f = open("files/asciiart.txt","r")
     colorama.just_fix_windows_console()
     print(colorama.Fore.GREEN , f.read())
     print(colorama.Back.RESET)
@@ -57,14 +62,15 @@ def about_me_info():
     """)
 
 def create_database():
-    database_file = Path("datanetwork.db")
-    if database_file.exists():
-        con = sqlite3.connect("datanetwork.db")
+    #database_path = Path("datanetwork.db")
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
         cur = con.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
         cur.execute("""CREATE TABLE IF NOT EXISTS USER(userid, regdate, name , nickname, steamid , discordid , nationality , idbrating , 
         safetyrating , license , track_records , race_amount , wins , podiums , team )""")
-
+        con.commit()
+        
         baseLcheck = cur.execute("SELECT EXISTS (SELECT 1 FROM LICENSE WHERE licenseid = '000000')").fetchone()[0] # this shit works somehow !
         #print(baseLcheck)
         if baseLcheck :
@@ -76,16 +82,16 @@ def create_database():
         pass
         #print("Database already exist")
 
-        con = sqlite3.connect("datanetwork.db")
+        con = sqlite3.connect(database_path)
         cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
         con.commit()
         con.close()
 
     else : 
         print("Database not found , Creating...")
-        con = sqlite3.connect("datanetwork.db")
+        con = sqlite3.connect(database_path)
         con.close()
-        
+        create_database()
 
 def menu_ascii():
     while True:

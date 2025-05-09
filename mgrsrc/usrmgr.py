@@ -19,7 +19,11 @@ from tabulate import tabulate
 import rnw_main
 from licensemgr import view_license_list
 
+#datavase :)
+database_folder = Path("databases")
 database_file = Path("datanetwork.db")
+
+database_path = database_folder / database_file
 
 def usr_menu():
     while True:
@@ -78,11 +82,10 @@ def usr_menu():
                 print("Error : 1 : Wrong Input : Function only takes number or \"exit\"")
 
 def gen_user_id():
-    database_file
-    if database_file.exists():
+    if database_path.exists():
         global user_uuid
         user_uuid = str(uuid.uuid4())[:6]
-        con = sqlite3.connect("datanetwork.db")
+        con = sqlite3.connect(database_path)
         cur = con.cursor()
         db_l_id = cur.execute("SELECT userid FROM USER").fetchall()
         for i in range(len(db_l_id)):
@@ -96,9 +99,7 @@ def gen_user_id():
         return
 
 def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nationality , usr_team ):
-    database_file # I know its pointless 
-
-    if database_file.exists:
+    if database_path.exists:
         pass
 
     else :
@@ -107,7 +108,7 @@ def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nati
 
     gen_user_id()
 
-    con = sqlite3.connect("datanetwork.db")
+    con = sqlite3.connect(database_path)
     cur = con.cursor()
 
     # []=============[]
@@ -137,13 +138,13 @@ def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nati
     print("Succesfully added user with ID : ",user_lid)
 
 def view_userlist():
-    if database_file.exists():
+    if database_path.exists():
         pass
     else :
         print("Error database doesnt exist ....")
         return
 
-    con = sqlite3.connect("datanetwork.db")
+    con = sqlite3.connect(database_path)
     cur = con.cursor()
 
     cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating FROM USER")
@@ -196,12 +197,12 @@ def edit_user_menu():
                 return
 
 def check_exist(user_lid): #this shit isnt working
-    if database_file.exists():
+    if database_path.exists():
         pass
     else :
         print("Error : ERR : Database does not exist")
         return
-    con = sqlite3.connect("datanetwork.db")
+    con = sqlite3.connect(database_path)
     cur = con.cursor()
 
     cur.execute("SELECT EXISTS (SELECT 1 FROM USER WHERE userid = ?)",(user_lid,))
@@ -219,13 +220,13 @@ def check_exist(user_lid): #this shit isnt working
 
 def edit_usrname():
     view_userlist()
-    if database_file.exists():
+    if database_path.exists():
         pass
     else :
         print("Database doesnt exists...Return...")
         return
     
-    con = sqlite3.connect("datanetwork.db")
+    con = sqlite3.connect(database_path)
     cur = con.cursor()
 
     user_lid = input("input user ID : ") # ADD CHECK FOR USRID 
@@ -247,8 +248,8 @@ def edit_usrname():
     con.close()
 
 def edit_usrnickname():
-    if database_file.exists():
-        con = sqlite3.connect("datanetwork.db")
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
         cur = con.cursor()
         pass
     else :
@@ -291,8 +292,8 @@ def edit_usrnickname():
     con.close()
 
 def edit_steamid():
-    if database_file.exists():
-        con = sqlite3.connect("datanetwork.db")
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
         cur = con.cursor()
         pass
     else :
@@ -327,8 +328,8 @@ def edit_steamid():
     con.close()
 
 def edit_discordid():
-    if database_file.exists():
-        con = sqlite3.connect("datanetwork.db")
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
         cur = con.cursor()
         pass
     else :
