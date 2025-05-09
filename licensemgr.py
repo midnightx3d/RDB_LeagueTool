@@ -1,3 +1,12 @@
+"""
+With this you can add,edit,delete License for the database
+There is menu function license_menu() that is cli 
+
+many other functions... ugh they work but I think this code is not optimal and it can be optimized for good
+for now this thing doesnt cause performance issues but when there is majority of the functions is done
+
+REMINDERS : Add license sorting by class or prestige 
+"""
 from itertools import count
 import sys
 import os
@@ -14,11 +23,6 @@ import rnw_main
 
 database_file = Path("datanetwork.db")
 
-# R R R R   E E E E
-# R  -  R   E      
-# R R R R   E E E E
-# R    R    E      
-# R     R   E E E E MINDER To add licenses levels and priority
 def license_menu():
 	while True:
 		print(">===============<")
@@ -63,24 +67,13 @@ def license_menu():
 				print("Error : 1 : Wrong Input : Function only takes number or \"exit\"")
 
 def add_license(name , country , color):
-	#print(name , country)
 
-	#creating license id + checking if id already exists , if exists : generate again ;
-	#licenseid = str(uuid.uuid4())[:6]
-
-	#gen_license_id()
-
-	#date = current date
 	regdate = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-	#print(regdate)
-	#print(licenseid)
 
+	# ADD CHECK IF DB EXISTS
 	con = sqlite3.connect("datanetwork.db")
 	cur = con.cursor()
 	cur.execute("CREATE TABLE IF NOT EXISTS LICENSE(licenseid, regdate, name, color, licensing_country)")
-
-	#res = cur.execute("SELECT name FROM sqlite_master")
-	#res.fetchone()
 
 	gen_license_id()
 
@@ -268,8 +261,6 @@ def edit_license():
 			case _:
 				print("Error : 1 : Wrong Input : Function only takes number or \"exit\"")
 				pass
-		#editd_data = "UPDATE LICENSE SET "
-
 
 		con.close()
 		license_menu()

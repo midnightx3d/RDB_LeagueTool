@@ -1,27 +1,27 @@
+"""
+For now this is the main menu , will be redacted or fully removed after making new UI
+
+FIX : ASCII art causes some issues
+
+TO DO : New UI with PyQt6
+"""
 from shutil import unregister_archive_format
 import sys
 import os
 import json
 import sqlite3
-#from turtle import color
 import colorama
 
 from pathlib import Path
 
 import usrmgr
 import licensemgr
-'''
-TO DO LIST :
-- Main Menu ASCII
-- User Menu ASCII
-- Json Structures
-'''
 
-RNW_VERSION = ("a.0.0.1")
+RNW_VERSION = ("a.0.0.2")
 
 def main():
     create_database()
-    fix_cmd_size()
+    #fix_cmd_size()
     launch_ascii()
     about_me_info()
 
@@ -142,6 +142,5 @@ def menu_ascii():
 
 
 
-# Driver program
 if __name__ == "__main__":
     sys.exit(int(main() or 0))

@@ -1,3 +1,9 @@
+"""
+This function is unfinished but this will be very important thing for league structure
+
+TO DO :
+all main functions
+"""
 from itertools import count
 import sys
 import os
@@ -29,7 +35,7 @@ def usr_menu():
         choice = input("Input : ")
         match choice:
             case "1" :
-                rnw_main.clr_menu()
+                rnw_main.clr_menu() #Finished MAYBE?
                 usr_name = input("Input user Real Name* : ")
                 usr_nickname = input("Input user Nickname* : ")
                 usr_steamid = int(input("Input user steamid64* : "))
@@ -57,10 +63,10 @@ def usr_menu():
 
             case "2" :
                 rnw_main.clr_menu()
-                pass
+                view_userlist() #FINISHED
             case "3" :
                 rnw_main.clr_menu()
-                pass
+                edit_user_menu()
             case "4" :
                 rnw_main.clr_menu()
                 pass
@@ -117,7 +123,6 @@ def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nati
     race_amount_base = 0
     wins_base = 0
     podiums_base = 0
-    #team_base = "None"
 
     insertinfo = """INSERT INTO USER(userid , regdate , name , nickname , steamid , discordid , nationality , idbrating , safetyrating ,
      license , track_records , race_amount , wins , podiums , team ) VALUES (? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?)"""
@@ -130,3 +135,233 @@ def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nati
     con.close()
 
     print("Succesfully added user with ID : ",user_lid)
+
+def view_userlist():
+    if database_file.exists():
+        pass
+    else :
+        print("Error database doesnt exist ....")
+        return
+
+    con = sqlite3.connect("datanetwork.db")
+    cur = con.cursor()
+
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating FROM USER")
+    columns = [desc[0] for desc in cur.description]
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating FROM USER")
+    data = cur.fetchall()
+
+    print(tabulate(data, headers=columns, tablefmt="grid"))
+    con.close()
+
+def edit_user_menu():
+    rnw_main.clr_menu()
+    while True :
+        print("====================")
+        print("1. Edit Name")
+        print("2. Edit NickName")
+        print("3. Edit SteamID")
+        print("4. Edit DiscordID")
+        print("5. Edit Nationality")
+        print("6. Adjust Rating")
+        print("7. Adjust Safety Rating")
+        print("8. Manage License.")
+        print("9. Manage Team")
+        print("0. Exit")
+        print("====================")
+
+        choice = str(input("Input : "))
+        match choice:
+            case "1" :
+                rnw_main.clr_menu()
+                edit_usrname()
+            case "2" :
+                rnw_main.clr_menu()
+                edit_usrnickname()
+
+            case "3" :
+                rnw_main.clr_menu()
+                edit_steamid()
+
+            case "4" :
+                rnw_main.clr_menu()
+                edit_discordid()
+
+            case "0" | "exit" :
+                rnw_main.clr_menu()
+                return
+            case _:
+                rnw_main.clr_menu()
+                print("Wrong input ... Return....")
+                return
+
+def check_exist(user_lid): #this shit isnt working
+    if database_file.exists():
+        pass
+    else :
+        print("Error : ERR : Database does not exist")
+        return
+    con = sqlite3.connect("datanetwork.db")
+    cur = con.cursor()
+
+    cur.execute("SELECT EXISTS (SELECT 1 FROM USER WHERE userid = ?)",(user_lid,))
+
+    arexists = cur.fetchone()[0]
+
+    if arexists:
+        pass
+    else :
+        print("Error User Not Found : 404 TRALALA ....")
+        con.close()
+        edit_user_menu()
+
+    con.close() #no this would work but I am and idiot
+
+def edit_usrname():
+    view_userlist()
+    if database_file.exists():
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+    
+    con = sqlite3.connect("datanetwork.db")
+    cur = con.cursor()
+
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID 
+    newUName = input("Input new User name : ")
+
+    print("You sure you want to continue?")
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            edit_user_menu()
+    cur.execute("UPDATE USER SET name = ? WHERE userid = ?",(newUName,user_lid))
+    con.commit()
+    showdata = cur.execute("SELECT * FROM USER WHERE userid =?",(user_lid,)).fetchall()
+    rnw_main.clr_menu()
+    print("Name Has been updated : ")
+    print(tabulate(showdata, tablefmt="grid"))
+    con.close()
+
+def edit_usrnickname():
+    if database_file.exists():
+        con = sqlite3.connect("datanetwork.db")
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    #check if usr exist
+    cur.execute("SELECT EXISTS (SELECT 1 FROM USER WHERE userid = ?)",(user_lid,))
+    arexist = cur.fetchone()[0]
+    if arexist:
+        pass
+    else :
+        con.close()
+        print("Error 404 Not Found CYA!")
+        return
+
+    newUNickname = input("Input new user Nickname : ")
+
+    print("You sure you want to continue?")
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            con.close()
+            edit_user_menu()
+
+    #cur.execute(f"SELECT * FROM USER LIMIT 0")
+    #columns = [desc[0] for desc in cur.description]
+
+    cur.execute("UPDATE USER SET nickname = ? WHERE userid = ?",(newUNickname,user_lid))    
+    con.commit()
+    showdata = cur.execute("SELECT * FROM USER WHERE userid =?",(user_lid,)).fetchall()
+    rnw_main.clr_menu()
+    print("Nickname Has been updated : ")
+    print(tabulate(showdata, tablefmt="grid"))
+
+    con.close()
+
+def edit_steamid():
+    if database_file.exists():
+        con = sqlite3.connect("datanetwork.db")
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+    
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    
+    check_exist(user_lid)
+
+    newUSteamID = int(input("Input new SteamID (INT ONLY!) : "))
+
+    print("You sure you want to continue?")
+
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            con.close()
+            edit_user_menu()
+    
+    cur.execute("UPDATE USER SET steamid = ? WHERE userid = ?",(newUSteamID,user_lid))
+
+    con.commit()
+    showdata = cur.execute("SELECT * FROM USER WHERE userid =?",(user_lid,)).fetchall()
+    rnw_main.clr_menu()
+    print("SteamID Has been updated : ")
+    print(tabulate(showdata, tablefmt="grid"))
+
+    con.close()
+
+def edit_discordid():
+    if database_file.exists():
+        con = sqlite3.connect("datanetwork.db")
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+    
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    
+    check_exist(user_lid)
+
+    newUDiscordID = int(input("Input new DiscordID (INT ONLY!) : "))
+
+    print("You sure you want to continue?")
+
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            con.close()
+            edit_user_menu()
+    
+    cur.execute("UPDATE USER SET discordid = ? WHERE userid = ?",(newUDiscordID,user_lid))
+
+    con.commit()
+    showdata = cur.execute("SELECT * FROM USER WHERE userid =?",(user_lid,)).fetchall()
+    rnw_main.clr_menu()
+    print("DiscordID Has been updated : ")
+    print(tabulate(showdata, tablefmt="grid"))
+
+    con.close()
+
+def edit_usrnationality():
+    pass
+    # ADD REAL COUNTRIES CHECKER
