@@ -44,7 +44,7 @@ def usr_menu():
                 usr_nickname = input("Input user Nickname* : ")
                 usr_steamid = int(input("Input user steamid64* : "))
                 print("Add user discord id?")
-                choice = input("YES / NO : ").strip()
+                choice = input("YES / NO : ").strip().lower()
                 if choice == "yes":
                     usr_discordid = int(input("Input user DiscordID : "))
                 
@@ -52,7 +52,7 @@ def usr_menu():
                 choice = None
 
                 print("Add user nationality?")
-                choice = input("YES / NO : ").strip()
+                choice = input("YES / NO : ").strip().lower()
                 if choice == "yes":
                     usr_nationality = input("Input user Nationality : ")
                 else :
@@ -117,13 +117,13 @@ def create_usr( usr_name , usr_nickname , usr_steamid , usr_discordid , usr_nati
 
     user_lid = user_uuid
     regdate = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    idbrating_base = 1250
-    safetyrating_base = 1000
+    idbrating_base = int(1250)
+    safetyrating_base = int(1000)
     license_base = "000000"
-    track_records_base = 0
-    race_amount_base = 0
-    wins_base = 0
-    podiums_base = 0
+    track_records_base = int(0)
+    race_amount_base = int(0)
+    wins_base = int(0)
+    podiums_base = int(0)
 
     insertinfo = """INSERT INTO USER(userid , regdate , name , nickname , steamid , discordid , nationality , idbrating , safetyrating ,
      license , track_records , race_amount , wins , podiums , team ) VALUES (? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?)"""
@@ -147,9 +147,9 @@ def view_userlist():
     con = sqlite3.connect(database_path)
     cur = con.cursor()
 
-    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating FROM USER")
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating FROM USER")
     columns = [desc[0] for desc in cur.description]
-    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating FROM USER")
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating FROM USER")
     data = cur.fetchall()
 
     print(tabulate(data, headers=columns, tablefmt="grid"))
@@ -187,6 +187,14 @@ def edit_user_menu():
             case "4" :
                 rnw_main.clr_menu()
                 edit_discordid()
+
+            case "5" :
+                rnw_main.clr_menu()
+                edit_usrnationality()
+
+            case "6" :
+                rnw_main.clr_menu()
+                edit_rating()
 
             case "0" | "exit" :
                 rnw_main.clr_menu()
@@ -366,3 +374,92 @@ def edit_discordid():
 def edit_usrnationality():
     pass
     # ADD REAL COUNTRIES CHECKER
+
+def edit_rating():
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+    
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    current_rating = cur.execute("SELECT idbrating FROM USER").fetchone()
+    check_exist(user_lid)
+
+    print("<========>")
+    print("1. Add Rating")
+    print("2. Remove Rating")
+    print("3. Input new Rating")
+    print("0. Exit")
+    print("<========>")
+
+    choice = input("Input : ").lower()
+    match choice :
+        case "1":
+            rnw_main.clr_menu()
+            print("Current rating : ")
+            print(current_rating[0])
+            print("How much rating to add : ")
+            add_r = int(input("Input (int only): "))
+            print("Do you want to continue ? ")
+            case_choice1 = input("YES/NO : ").strip().lower()
+            match case_choice1:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+            new_rating = int(current_rating[0] + add_r)
+            cur.execute("UPDATE USER SET idbrating = ? WHERE userid = ?",(new_rating,user_lid))
+            con.commit()
+            print("New Rating is : " , new_rating )
+            pass
+        case "2":
+            rnw_main.clr_menu()
+            print("Current rating : ")
+            print(current_rating[0])
+            print("How much rating to remove : ")
+            rm_r = int(input("Input (int only): "))
+            print("Do you want to continue ? ")
+            case_choice2 = input("YES/NO : ").strip().lower()
+            match case_choice2:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+            new_rating = int(current_rating[0] - rm_r)
+            cur.execute("UPDATE USER SET idbrating = ? WHERE userid = ?",(new_rating,user_lid))
+            con.commit()
+            print("New Rating is : " , new_rating )
+
+        case "3" :
+            rnw_main.clr_menu()
+            print("Current rating : ")
+            print(current_rating[0])
+
+            set_rating = int(input("Input rating to set : "))
+
+            case_choice3 = input("YES/NO : ").strip().lower()
+            match case_choice3:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+
+            cur.execute("UPDATE USER SET idbrating = ? WHERE userid = ?",(set_rating,user_lid))
+            con.commit()
+            print("New Rating is : " , set_rating )
+            #idk if this works I hope it does
+        case "0" | "exit" :
+            con.close()
+            edit_user_menu()
+        case _:
+            con.close()
+            print("Error : Wrong Input !")
+            edit_user_menu()
+
