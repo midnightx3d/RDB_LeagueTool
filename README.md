@@ -8,10 +8,12 @@ current version is "a.0.0.2"
 version a.0.0.1 changelog
 - cli menu
 - working license manager
+
 version a.0.0.2 changelog
 - fixed some mistakes
 - some of the user manger function added
 - project structure changed
+
 version a.0.0.3 expected :
 - fully working user database management
 - track , car , league functions
