@@ -11,6 +11,7 @@ import json
 import colorama
 import sqlite3
 import uuid
+import pycountry
 
 from pathlib import Path
 from datetime import datetime
@@ -147,9 +148,9 @@ def view_userlist():
     con = sqlite3.connect(database_path)
     cur = con.cursor()
 
-    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating FROM USER")
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating , license FROM USER")
     columns = [desc[0] for desc in cur.description]
-    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating FROM USER")
+    cur.execute(f"SELECT userid , name , nickname , steamid , nationality , idbrating , safetyrating , license FROM USER")
     data = cur.fetchall()
 
     print(tabulate(data, headers=columns, tablefmt="grid"))
@@ -196,6 +197,18 @@ def edit_user_menu():
                 rnw_main.clr_menu()
                 edit_rating()
 
+            case "7" :
+                rnw_main.clr_menu()
+                edit_SRating()
+
+            case "8" :
+                rnw_main.clr_menu()
+                manage_usr_license()
+
+            case "9" :
+                rnw_main.clr_menu()
+                usr_team()
+
             case "0" | "exit" :
                 rnw_main.clr_menu()
                 return
@@ -225,6 +238,23 @@ def check_exist(user_lid): #this shit isnt working
         edit_user_menu()
 
     con.close() #no this would work but I am and idiot
+
+def validate_country(user_input):
+    user_input = user_input.strip().lower()
+    
+    # Attempt to match alpha-2 code
+    country = pycountry.countries.get(alpha_2=user_input.upper())
+    if country:
+        return country.name
+
+    # Attempt to match full country name or official name
+    for country in pycountry.countries:
+        if user_input == country.name.lower():
+            return country.name
+        if hasattr(country, 'official_name') and user_input == country.official_name.lower():
+            return country.name
+    
+    return None
 
 def edit_usrname():
     view_userlist()
@@ -372,9 +402,41 @@ def edit_discordid():
     con.close()
 
 def edit_usrnationality():
-    pass
-    # ADD REAL COUNTRIES CHECKER
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
 
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    check_exist(user_lid)
+
+    #newUCountry = str(input("Input new user nationality : "))
+    user_input = input("Type Country Name or Alpha-2 Code: ")
+    country_name = validate_country(user_input)
+
+    #print(country_name)
+
+    print("Do you want to continue ? ")
+    case_choice = input("YES/NO : ").strip().lower()
+    match case_choice:
+        case "yes":
+            pass
+        case _:
+            con.close()
+            edit_user_menu()
+
+    cur.execute("UPDATE USER SET nationality = ? WHERE userid = ?", (country_name,user_lid))
+    con.commit()
+    print("New Driver nationality set to : ",country_name)
+    con.close()
+
+
+
+    # ADD REAL COUNTRIES CHECKER, DONE
 def edit_rating():
     if database_path.exists():
         con = sqlite3.connect(database_path)
@@ -463,3 +525,140 @@ def edit_rating():
             print("Error : Wrong Input !")
             edit_user_menu()
 
+
+
+def edit_SRating():
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
+        cur = con.cursor()
+        pass
+    else :
+        print("Database doesnt exists...Return...")
+        return
+    
+    view_userlist()
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    current_SRating = cur.execute("SELECT safetyrating FROM USER").fetchone()
+    check_exist(user_lid)
+    ########################################
+    print("<========>")
+    print("1. Add Rating")
+    print("2. Remove Rating")
+    print("3. Input new Rating")
+    print("0. Exit")
+    print("<========>")
+
+    choice = input("Input : ").lower()
+    match choice :
+        case "1":
+            rnw_main.clr_menu()
+            print("Current Safety Rating : ")
+            print(current_SRating[0])
+            print("How much rating to add : ")
+            add_sr = int(input("Input (int only): "))
+            print("Do you want to continue ? ")
+            case_choice1 = input("YES/NO : ").strip().lower()
+            match case_choice1:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+            new_srating = int(current_SRating[0] + add_sr)
+            cur.execute("UPDATE USER SET safetyrating = ? WHERE userid = ?",(new_srating,user_lid))
+            con.commit()
+            con.close()
+            print("New Rating is : " , new_srating )
+            pass
+
+
+        case "2":
+            #rnw_main.clr_menu()
+            print("Current Safety Rating : ")
+            print(current_SRating[0])
+
+            print("How much rating to remove : ")
+            rm_sr = int(input("Input (int only): "))
+
+            print("Do you want to continue ? ")
+            case_choice2 = input("YES/NO : ").strip().lower()
+            match case_choice2:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+
+            new_SRating = int(current_SRating[0] - rm_sr)
+            cur.execute("UPDATE USER SET safetyrating = ? WHERE userid = ?",(new_SRating,user_lid))
+            con.commit()
+            con.close()
+            print("New Rating is : " , new_SRating )
+
+        case "3" :
+            rnw_main.clr_menu()
+            print("Current rating : ")
+            print(current_rating[0])
+
+            set_SRating = int(input("Input rating to set : "))
+
+            case_choice3 = input("YES/NO : ").strip().lower()
+            match case_choice3:
+                case "yes":
+                    pass
+                case _:
+                    con.close()
+                    edit_user_menu()
+
+            cur.execute("UPDATE USER SET safetyrating = ? WHERE userid = ?",(set_SRating,user_lid))
+            con.commit()
+            con.close()
+            print("New Rating is : " , set_SRating )
+            #idk if this works I hope it does
+        case "0" | "exit" :
+            con.close()
+            edit_user_menu()
+        case _:
+            con.close()
+            print("Error : Wrong Input !")
+            edit_user_menu()
+
+def manage_usr_license():
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
+        cur = con.cursor()
+    else :
+        print("Error : ERR : Database does not exist")
+        return
+    
+    cur.execute(f"SELECT userid , name , nickname , nationality , license FROM USER")
+    columns = [desc[0] for desc in cur.description]
+    cur.execute(f"SELECT userid , name , nickname , nationality , license FROM USER")
+    data_l = cur.fetchall()
+
+    
+    print(tabulate(data_l, headers=columns, tablefmt="grid"))
+    user_lid = input("input user ID : ") # ADD CHECK FOR USRID
+    
+    check_exist(user_lid)
+    print(view_license_list())
+
+    usr_llicense = input("Input license to assign : ")
+    # add check if license in the list later
+    print("You sure you want to continue?")
+
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            con.close()
+            edit_user_menu()
+    
+    cur.execute("UPDATE USER SET license = ? WHERE userid = ?",(usr_llicense,user_lid))
+    con.commit()
+    con.close()
+    return
+
+def usr_team():
+    print("W.I.P")

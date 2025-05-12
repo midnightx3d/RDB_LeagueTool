@@ -1,6 +1,9 @@
 import customtkinter as ctk
 import requests
 
+import json
+import os
+
 # Set the appearance mode and default color theme
 ctk.set_appearance_mode("dark")  # or "light"
 ctk.set_default_color_theme("dark-blue")
@@ -26,17 +29,21 @@ class MainMenuPage(ctk.CTkFrame):
         self.readme_text.pack(fill="both", expand=True, padx=20, pady=20)
         self.readme_text.configure(state="disabled")  # Make the textbox read-only
 
-
-
 class SettingsPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
-        label = ctk.CTkLabel(self, text="⚙ Settings", font=("Segoe UI", 20, "bold"))
+
+        label = ctk.CTkLabel(self, text="Settings", font=("Segoe UI", 20, "bold"))
         label.pack(pady=20)
+
+        # Appearance mode option menu
+        appearance_label = ctk.CTkLabel(self, text="Appearance Mode:")
+        appearance_label.pack(pady=(10, 0))
 
 class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
+
         self.title("Racing League Manager")
         self.geometry("1600x900") 
         self.resizable(False, False) # need to be unlocked!!! I use hyprland so I use it 
