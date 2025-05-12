@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import requests
 
 # Set the appearance mode and default color theme
 ctk.set_appearance_mode("dark")  # or "light"
@@ -7,8 +8,24 @@ ctk.set_default_color_theme("dark-blue")
 class MainMenuPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
-        label = ctk.CTkLabel(self, text="🏁 Main Menu", font=("Segoe UI", 20, "bold"))
-        label.pack(pady=20)
+        self.label = ctk.CTkLabel(self, text="Main Menu", font=("Segoe UI", 20, "bold"))
+        self.label.pack(pady=20)
+
+        # Fetch README content
+        readme_url = "https://raw.githubusercontent.com/midnightx3d/RDB_LeagueTool/main/README.md"
+        try:
+            response = requests.get(readme_url)
+            response.raise_for_status()
+            readme_content = response.text
+        except requests.RequestException as e:
+            readme_content = f"Error fetching README: {e}"
+
+        # Display README content
+        self.readme_text = ctk.CTkTextbox(self, wrap="word")
+        self.readme_text.insert("0.0", readme_content)
+        self.readme_text.pack(fill="both", expand=True, padx=20, pady=20)
+        self.readme_text.configure(state="disabled")  # Make the textbox read-only
+
 
 
 class SettingsPage(ctk.CTkFrame):
@@ -59,7 +76,7 @@ class MainApp(ctk.CTk):
         self.user_btn.pack(pady=5,fill="x")
 
         #settings button
-        self.settings_btn = ctk.CTkButton(self.lowbar , text="Settings", fg_color="transparent" , corner_radius= 0, font=("Segoe UI", 16, "bold"),command=self.show_settings)
+        self.settings_btn = ctk.CTkButton(self.lowbar , text="Settings ⚙", fg_color="transparent" , corner_radius= 0, font=("Segoe UI", 16, "bold"),command=self.show_settings)
         self.settings_btn.pack(pady = 5 , fill = "x")
         #database button
         self.database_btn = ctk.CTkButton(self.lowbar , text="Database", fg_color="transparent" , corner_radius= 0, font=("Segoe UI", 16, "bold"))
@@ -98,4 +115,3 @@ class MainApp(ctk.CTk):
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
-#1231
