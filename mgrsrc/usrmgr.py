@@ -74,7 +74,7 @@ def usr_menu():
                 edit_user_menu()
             case "4" :
                 rnw_main.clr_menu()
-                pass
+                delete_user()
             case "0" | "exit" :
                 rnw_main.clr_menu()
                 return
@@ -353,6 +353,7 @@ def edit_steamid():
             pass
         case _:
             con.close()
+            return
             edit_user_menu()
     
     cur.execute("UPDATE USER SET steamid = ? WHERE userid = ?",(newUSteamID,user_lid))
@@ -653,6 +654,7 @@ def manage_usr_license():
             pass
         case _:
             con.close()
+            return
             edit_user_menu()
     
     cur.execute("UPDATE USER SET license = ? WHERE userid = ?",(usr_llicense,user_lid))
@@ -662,3 +664,33 @@ def manage_usr_license():
 
 def usr_team():
     print("W.I.P")
+
+def delete_user():
+    if database_path.exists():
+        con = sqlite3.connect(database_path)
+        cur = con.cursor()
+    else :
+        print("Error : ERR : Database does not exist")
+        return
+    
+    view_userlist()
+    user_lid = input("input user ID : ")
+    check_exist(user_lid)
+
+    print("You sure you want to continue?")
+
+    choice = input("YES/NO : ").strip().lower()
+    match choice:
+        case "yes" :
+            pass
+        case _:
+            con.close()
+            return
+            edit_user_menu()
+    
+    cur.execute("DELETE FROM USER WHERE userid = ?",(user_lid,))
+    con.commit()
+    con.close()
+
+    print("User with ID : " , user_lid , " was deleted !")
+    return
